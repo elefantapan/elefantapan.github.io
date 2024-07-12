@@ -7,15 +7,29 @@
     </head>
     <body>
         <div id="welcomeMessage">
-            <div class="textContainer">
-                <div class="text" id="W">W</div>
-                <div class="text" id="e">e</div>
-                <div class="text" id="l">l</div>
-                <div class="text" id="c">c</div>
-                <div class="text" id="o">o</div>
-                <div class="text" id="m">m</div>
-                <div class="text" id="e">e</div>
-            </div>
+          <div class="textContainer">
+            <span class="text">W</span>
+            <span class="text">e</span>
+            <span class="text">l</span>
+            <span class="text">c</span>
+            <span class="text">o</span>
+            <span class="text">m</span>
+            <span class="text">e</span>
+          </div>
         </div>
-    </body>
+        <h1 id="click">Click anywhere to start</h1>
+        <script>
+            document.addEventListener('click', function() {
+            const animationElement = document.getElementById('welcomeMessage');
+            animationElement.classList.add('fromWelcomeToMain');
+
+            const animationElement2 = document.getElementById('click');
+            animationElement2.classList.add('fromWelcomeToMain2');
+            
+            // Redirect after the animation completes (2 seconds)
+            setTimeout(function() {
+                window.location.href = "test.html"; // or use window.location.replace("test.html");
+            }, 1000);
+        });
+        </script>
 </html>
