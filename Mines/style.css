@@ -1,0 +1,212 @@
+:root {
+  --bg: #1e1e2f;
+  --card: #2a2a40;
+  --accent: #00b894;
+  --text: #ffffff;
+  --muted: #aaaaaa;
+  --bomb: #e74c3c;
+  --diamond: #27ae60;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
+h1 {
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+#sidebar {
+  margin-bottom: 20px;
+}
+
+#mineCount {
+  width: 50px;
+  padding: 5px;
+  color: var(--text);
+  border-radius: 8px;
+  text-align: center;
+}
+
+#generateBtn {
+  padding: 8px 15px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--accent);
+  color: var(--text);
+  cursor: pointer;
+}
+.gradient-border {
+  padding: 2px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), #00cec9);
+  display: inline-block;
+}
+
+.gradient-border input {
+  background-color: var(--bg);
+  color: var(--text);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  outline: none;
+  width: 60px;
+}
+
+/* Glowing effect on focus */
+.gradient-border input:focus {
+  border: none;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 255, 225, 0.7);
+}
+
+#cardGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 80px);
+  gap: 10px;
+  justify-content: center;
+}
+
+.card-container {
+  perspective: 1000px;
+}
+
+.card {
+  width: 80px;
+  height: 80px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  position: relative;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-front,
+.card-back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: 2px solid var(--muted);
+  box-sizing: border-box;
+}
+
+.card-front {
+  background-color: var(--card);
+}
+
+.card-back {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  transform: rotateY(180deg);
+}
+
+.card-container.flipped .card {
+  transform: rotateY(180deg);
+}
+
+.card-back.bomb {
+  background-color: var(--bomb);
+  border: 2px solid #c0392b;
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--card);
+  color: var(--text);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  z-index: 1000;
+  width: 20%;
+}
+
+.popup.hidden {
+  display: none;
+}
+
+.play-again {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--accent);
+  border: none;
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* Gradient-styled buttons */
+button {
+  border-radius: 5px;
+  background: linear-gradient(135deg, var(--accent), #00cec9);
+}
+
+button:hover {
+  transition: box-shadow 0.1s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 255, 225, 0.7);
+}
+
+/* Make all inputs inside .gradient-border use white text */
+.gradient-border input {
+  background-color: var(--bg);
+  color: var(--text); /* Ensures text is visible */
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  outline: none;
+  width: 60px;
+}
+
+/* Optional focus glow */
+.gradient-border input:focus {
+  transition: box-shadow 0.1s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 255, 225, 0.7);
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Remove arrows on number input */
+#mineCount::-webkit-inner-spin-button,
+#mineCount::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#mineCount {
+  -moz-appearance: textfield; /* For Firefox */
+  appearance: none;
+}

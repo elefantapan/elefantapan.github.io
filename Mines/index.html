@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card Mines Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Card Mines</h1>
+    <div id="sidebar">
+      <label for="mineCount">Mines:</label>
+      <div class="gradient-border">
+        <input type="number" id="mineCount" min="0" max="16" value="2" />
+      </div>
+
+      <button id="generateBtn" onclick="generateGrid()">Generate</button>
+    </div>
+    <div id="cardGrid"></div>
+
+    <div id="resultPopup" class="popup hidden">
+      <button class="close-btn" onclick="closePopup()">✖</button>
+      <h2 id="resultMessage"></h2>
+      <p>Mines: <span id="mineCountStat"></span></p>
+      <p>
+        Safe Clicks: <span id="clickedCount"></span> /
+        <span id="totalSafe"></span>
+      </p>
+      <p>
+        <p><strong>Time:</strong> <span id="timeTaken"></span></p>
+      </p>
+      <button class="play-again" onclick="playAgain()">Play Again</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
