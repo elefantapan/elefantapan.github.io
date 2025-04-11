@@ -1,0 +1,109 @@
+:root {
+  --bg: #1e1e2f;
+  --card: #2a2a40;
+  --accent: #00b894;
+  --text: #ffffff;
+  --muted: #aaaaaa;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
+h1 {
+  margin-bottom: 10px;
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+nav button {
+  background-color: var(--card);
+  color: var(--text);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+nav button:hover {
+  background-color: var(--accent);
+}
+
+.tab {
+  display: none;
+  background: var(--card);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  width: 90%;
+  max-width: 600px;
+}
+
+.active-tab {
+  display: block;
+}
+
+#scoreDisplay,
+#multiMessage {
+  font-size: 1.5rem;
+  margin: 20px 0;
+}
+
+.leaderboard-entry {
+  border-bottom: 1px solid #444;
+  padding: 10px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.leaderboard-entry strong {
+  color: var(--text);
+}
+
+.filter-icon {
+  cursor: pointer;
+  margin: 10px 0;
+  color: var(--accent);
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+.filters {
+  display: none;
+  margin-bottom: 10px;
+}
+
+.filters input,
+.filters select {
+  margin-right: 10px;
+}
+
+#progressBarContainer {
+  width: 100%;
+  background-color: #444;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+#progressBar {
+  width: 0%;
+  height: 100%;
+  background-color: var(--accent);
+  transition: width 0.1s linear;
+}

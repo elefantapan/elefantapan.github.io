@@ -1,0 +1,76 @@
+<!-- Full Super Clicker Code -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Super Clicker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>💚 Super Clicker</h1>
+
+    <nav>
+      <button onclick="showTab('game')">🕹️ Game</button>
+      <button onclick="showTab('multiplayer')">👥 Multiplayer</button>
+      <button onclick="showTab('leaderboard')">🏆 Leaderboard</button>
+      <button onclick="showTab('settings')">⚙️ Settings</button>
+    </nav>
+
+    <div id="game" class="tab active-tab">
+      <div id="scoreDisplay">Press any key to start</div>
+      <div id="progressBarContainer" style="display: none">
+        <div id="progressBar"></div>
+      </div>
+    </div>
+
+    <div id="multiplayer" class="tab">
+      <div id="multiMessage">Press space to start multiplayer</div>
+      <div id="progressBarContainerMultiplayer" style="display: none">
+        <div id="progressBarMultiplayer"></div>
+      </div>
+    </div>
+
+    <div id="leaderboard" class="tab">
+      <div class="filter-icon" onclick="toggleFilters()">🔍 Filter</div>
+      <div class="filters" id="filterBox">
+        <select id="filterTime">
+          <option value="">All Times</option>
+          <option value="5">5s</option>
+          <option value="10">10s</option>
+          <option value="30">30s</option>
+        </select>
+        <input id="filterKeys" placeholder="Keys (e.g. g,h)" />
+        <button onclick="loadLeaderboard()">Apply</button>
+      </div>
+      <div id="leaderboardList"></div>
+    </div>
+
+    <div id="settings" class="tab">
+      <label for="keyPreset">Key Preset:</label>
+      <select id="keyPreset" onchange="applyPreset()">
+        <option value="g,h">G & H</option>
+        <option value="j,s">J & S</option>
+        <option value="all">All Letters</option>
+        <option value="custom">Custom...</option>
+      </select>
+
+      <div id="customKeysContainer" style="display: none; margin-top: 10px">
+        <label for="customKeys">Enter keys (comma separated):</label>
+        <input
+          id="customKeys"
+          type="text"
+          value="g,h"
+          oninput="updateCustomKeys()"
+        />
+      </div>
+
+      <label for="testDuration">Test Duration (seconds):</label>
+      <select id="testDuration">
+        <option value="5">5s</option>
+        <option value="10">10s</option>
+        <option value="30">30s</option>
+      </select>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
