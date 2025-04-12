@@ -23,7 +23,7 @@ body {
 .container {
   background-color: var(--card);
   padding: 20px;
-  height: 20%;
+  height: 27%;
   margin-top: 40px;
   border: none;
   box-shadow: 0 0 10px rgba(0, 255, 225, 0.7);
