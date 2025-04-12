@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Path Pulse</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('gameTab')">
+        Game
+      </button>
+      <button class="tab-btn" onclick="switchTab('leaderboardTab')">
+        Leaderboard
+      </button>
+      <button class="tab-btn" onclick="switchTab('settingsTab')">
+        Settings
+      </button>
+    </div>
+
+    <!-- Game Tab -->
+    <div id="gameTab" class="tab-content active">
+      <div id="startScreen">
+        <h2>Welcome to Path Pulse</h2>
+      </div>
+      <div id="countdown">Waiting to start...</div>
+      <div id="levelCounter"></div>
+      <div id="timerDisplay"></div>
+      <div class="controls">
+        <p><button onclick="startGame()">Re/start Game</button></p>
+        <p><button onclick="togglePause()">Pause/Resume</button></p>
+      </div>
+      <div id="resultPopup" class="popup hidden">
+        <div class="popup-content">
+          <h2 id="resultTitle">You Win!</h2>
+          <p id="resultDetails"></p>
+          <button onclick="closeResultPopup()">Close</button>
+        </div>
+      </div>
+
+      <div id="grid"></div>
+    </div>
+
+    <!-- Leaderboard Tab -->
+    <div id="leaderboardTab" class="tab-content">
+      <h2>🏆 Leaderboard</h2>
+      <ul id="leaderboardList"></ul>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settingsTab" class="tab-content">
+      <h2>⚙️ Settings</h2>
+
+      <div class="setting-group">
+        <label for="countdownTime"
+          >Countdown Duration: <span id="countdownLabel"></span>s</label
+        >
+        <input type="range" id="countdownTime" min="1" max="5" step="1" />
+      </div>
+
+      <div class="setting-group">
+        <label for="pathSpeed"
+          >Path Display Speed: <span id="speedLabel"></span
+        ></label>
+        <input type="range" id="pathSpeed" min="100" max="1000" step="50" />
+      </div>
+
+      <div class="setting-group" style="text-align: center">
+        <button onclick="resetLeaderboard()">Reset Leaderboard</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
