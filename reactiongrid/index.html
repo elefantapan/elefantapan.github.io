@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reaction Grid</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <button data-tab="game-tab">Game</button>
+        <button data-tab="leaderboard-tab">Leaderboard</button>
+        <button data-tab="settings-tab">Settings</button>
+      </nav>
+
+      <main>
+        <!-- Game Tab -->
+        <section id="game-tab" class="tab active">
+          <div id="start-screen">
+            <button id="start-btn">Start Game</button>
+          </div>
+          <div id="countdown" class="hidden"></div>
+          <div id="grid" class="grid hidden"></div>
+          <div id="progress-container" class="hidden">
+            <div id="progress-bar"></div>
+          </div>
+          <div id="popup" class="hidden"></div>
+        </section>
+
+        <!-- Leaderboard Tab -->
+        <section id="leaderboard-tab" class="tab">
+          <h2>Leaderboard</h2>
+          <ul id="leaderboard-list"></ul>
+        </section>
+
+        <!-- Settings Tab -->
+        <section id="settings-tab" class="tab">
+          <h2>Settings</h2>
+          <label>
+            Countdown (seconds):
+            <input
+              type="number"
+              id="countdown-setting"
+              value="3"
+              min="1"
+              max="10"
+            />
+          </label>
+          <label>
+            Number of tiles:
+            <input
+              type="number"
+              id="tile-count-setting"
+              value="20"
+              min="5"
+              max="50"
+            />
+          </label>
+        </section>
+      </main>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
