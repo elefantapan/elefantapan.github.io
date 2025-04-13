@@ -13,6 +13,10 @@ body {
   background-color: var(--bg);
 }
 
+.smol {
+  font-size: 10px;
+  color: #454545;
+}
 body {
   display: flex;
   justify-content: center; /* Center horizontally */
@@ -23,7 +27,7 @@ body {
 .container {
   background-color: var(--card);
   padding: 20px;
-  height: 37%;
+  height: 40%;
   margin-top: 40px;
   border: none;
   box-shadow: 0 0 10px rgba(0, 255, 225, 0.7);
