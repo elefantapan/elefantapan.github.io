@@ -1,0 +1,138 @@
+:root {
+  --bg: #1e1e2f;
+  --card: #2a2a40;
+  --accent: #00b894;
+  --text: #ffffff;
+  --muted: #aaaaaa;
+  --bomb: #e74c3c;
+  --diamond: #27ae60;
+}
+body {
+  margin: 0;
+  background-color: var(--bg);
+  font-family: Arial, sans-serif;
+  color: var(--text);
+  text-align: center;
+}
+
+h1 {
+  margin-top: 20px;
+}
+
+#points-display {
+  margin-left: 20px;
+  font-size: 18px;
+  background-color: var(--bg);
+  box-shadow: 0 0 10px rgba(0, 255, 225, 0.7);
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+#points-display:hover {
+  box-shadow: 0 0 15px rgba(0, 255, 225, 0.7);
+}
+
+#controls {
+  margin: 10px auto 20px;
+}
+
+#plinko-board {
+  position: relative;
+  width: 600px;
+  height: 750px;
+  margin: 20px auto;
+  background-color: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+
+  box-shadow: 0 0 15px var(--card);
+}
+
+.peg {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: var(--diamond);
+  border-radius: 50%;
+}
+
+.ball {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  z-index: 10;
+  transition: top 0.05s ease-out, left 0.05s ease-out, opacity 0.3s ease-out;
+}
+
+.slot {
+  position: absolute;
+  width: 80px;
+
+  transition: box-shadow 0.3s ease-in-out;
+  height: 40px;
+  background-color: var(--card);
+  border: 1px solid var(--accent);
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 0;
+}
+
+.active-slot {
+  transition: box-shadow 0.3s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 255, 225, 0.7);
+}
+
+#ball-count {
+  padding: 8px;
+  border-radius: 12px;
+  margin-top: 10px;
+  width: 60px;
+  text-align: center;
+  border: none;
+}
+
+#result {
+  margin-top: 10px;
+}
+
+button {
+  margin-left: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: none;
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 0 5px rgba(0, 255, 225, 0.7);
+}
+
+button:hover {
+  transition: box-shadow 0.1s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 255, 225, 0.7);
+}
+
+input {
+  background-color: var(--bg);
+  color: var(--text);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  outline: none;
+  width: 60px;
+  box-shadow: 0 0 5px rgba(0, 255, 225, 0.7);
+}
+
+input:focus {
+  transition: all 0.1s ease;
+  border: none;
+  outline: none;
+  box-shadow: 0 0 15px rgba(0, 255, 225, 0.7);
+}
