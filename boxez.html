@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>EldzeyBoxez</title>
+<style>
+:root{
+  --bg: #1e1e2f;
+  --tile: #2a2a40;
+  --accent: #00b894;
+  --text: #ffffff;
+  --miss: #e74c3c;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin:0; padding:20px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+h1{margin:6px 0 0}
+.badge {
+  background:var(--tile); padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);
+}
+nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:6px 0}
+nav button{background:var(--tile);border:none;color:var(--text);padding:8px 12px;border-radius:6px;cursor:pointer}
+nav button:hover{box-shadow:0 0 14px rgba(0,255,190,0.06)}
+.container{width:100%;max-width:1100px}
+.tabs { display:flex; gap:8px; justify-content:center; margin-bottom:12px; }
+.tab { display:none; }
+.tab.active { display:block; }
+
+/* Boxes grid */
+#boxesGrid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+.boxCard {
+  background:var(--tile); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px; min-height:144px;
+  align-items:center; justify-content:space-between; border:1px solid rgba(255,255,255,0.03);
+}
+.boxCard h3{margin:0;font-size:1.05rem}
+.boxCard .price{opacity:.95}
+.btn { padding:8px 12px; border-radius:8px; background:var(--bg); color:var(--text); border:none; cursor:pointer; box-shadow:0 0 6px rgba(0,255,200,0.06) }
+.btn:hover{box-shadow:0 0 16px rgba(0,255,200,0.12)}
+
+/* Case popup styles */
+.case-popup, .win-popup {
+  position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:2000;
+}
+.case-window {
+  width:min(96vw,1100px); background:var(--tile); border-radius:12px; padding:14px; border:2px solid var(--accent);
+  box-shadow:0 18px 60px rgba(0,0,0,0.6); position:relative;
+}
+.stripWrap { position:relative; height:130px; overflow:hidden; margin-top:10px; border-radius:10px; }
+.centerPointer {
+  position:absolute; top:0; bottom:0; left:50%; transform:translateX(-50%); width:6px;
+  background: linear-gradient(180deg, transparent, #ff3b3b, transparent);
+  z-index:4000; pointer-events:none;
+  box-shadow:0 0 12px rgba(255,0,0,0.25);
+}
+.case-strip { display:flex; align-items:center; height:100%; transform:translateX(0); will-change:transform; }
+.case-item {
+  min-width:156px; height:100px; margin:8px; border-radius:10px; background:#202038;
+  border:2px solid rgba(255,255,255,0.03); display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:6px; padding:8px; flex-shrink:0; color:var(--text);
+}
+.case-item.small { min-width:120px; font-size:.90rem; padding:6px; }
+.case-item .iname { font-weight:700; }
+.case-item .ival { opacity:.9; font-size:.9rem; }
+
+/* rarity */
+.r-common{ border-color:#4a5568; }
+.r-uncommon{ border-color:#2196f3; }
+.r-epic{ border-color:#9c27b0; }
+.r-legendary{ border-color:#ff9800; }
+
+/* Win popup */
+.win-box { background:var(--tile); border-radius:10px; padding:14px; border:2px solid var(--accent); width:min(92vw,480px); box-shadow:0 12px 40px rgba(0,0,0,0.6); }
+.win-meta{ opacity:.9; margin-top:6px; }
+
+/* Inventory */
+#invGrid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:12px; }
+.invCard { background:var(--tile); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); text-align:left; }
+.invMeta { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:8px }
+
+/* Redeem */
+.redeemArea { display:flex; gap:8px; justify-content:center; margin-top:10px; flex-wrap:wrap; }
+.redeemMsg { margin-top:8px; min-height:20px; opacity:.95 }
+
+/* responsive tweaks */
+@media (max-width:520px){
+  .case-item { min-width:120px }
+  .case-window { padding:10px }
+}
+</style>
+</head>
+<body>
+  <h1>🎁 CroweyBoxz</h1>
+
+  <div style="display:flex;gap:10px;align-items:center;">
+    <div class="badge">Balance: $<span id="balance">10.00</span></div>
+    <button class="btn" id="addDollar">Add $1</button>
+  </div>
+
+  <nav>
+    <button id="btnHome">Boxes</button>
+    <button id="btnInv">Inventory</button>
+    <button id="btnRedeem">Redeem</button>
+  </nav>
+
+  <div class="container">
+    <!-- Boxes tab -->
+    <section id="homeTab" class="tab active">
+      <div id="boxesGrid" aria-live="polite"></div>
+    </section>
+
+    <!-- Inventory tab -->
+    <section id="invTab" class="tab">
+      <h2>Your Items</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn filterBtn" data-filter="all">All</button>
+        <button class="btn filterBtn" data-filter="common">Common</button>
+        <button class="btn filterBtn" data-filter="uncommon">Uncommon</button>
+        <button class="btn filterBtn" data-filter="epic">Epic</button>
+        <button class="btn filterBtn" data-filter="legendary">Legendary</button>
+      </div>
+      <div id="invGrid"></div>
+    </section>
+
+    <!-- Redeem tab -->
+    <section id="redeemTab" class="tab">
+      <h2>Redeem Codes</h2>
+      <div class="redeemArea">
+        <input id="redeemInput" placeholder="Enter code (any case)" />
+        <button class="btn" id="redeemBtn">Redeem</button>
+      </div>
+      <div id="redeemMsg" class="redeemMsg"></div>
+    </section>
+  </div>
+
+  <!-- Case popup -->
+  <div class="case-popup" id="casePopup" aria-hidden="true">
+    <div class="case-window" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-weight:700">Opening case…</div>
+        <div style="opacity:.85;font-size:.9rem">Good luck!</div>
+      </div>
+      <div class="stripWrap" style="margin-top:10px;">
+        <div class="centerPointer" id="centerPointer"></div>
+        <div class="case-strip" id="caseStrip" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Win popup -->
+  <div class="win-popup" id="winPopup" aria-hidden="true">
+    <div class="win-box">
+      <h3 id="winTitle">You got: —</h3>
+      <div id="winMeta" class="win-meta">—</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+        <button class="btn" id="keepBtn">Keep</button>
+        <button class="btn" id="sellBtn">Sell</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ---------------- State ---------------- */
+let balance = 10.00;
+let inventory = [];
+let currentDrop = null;
+let currentBoxIndex = null;
+
+/* Redeem codes (keys normalized) */
+const redeemCodes = {
+  "money": 8,
+  "freemoney": 10,
+  "2025": 3.65,
+  "soon2026": 9.62,
+  "gimmiedemmoney": 95.21,
+  "m0n3y": 5.25
+};
+
+/* ---------------- Boxes (unique pools) ----------------
+Each item: {name, value, rarity, weight}
+*/
+const BOXES = [
+  {name:"Penny Trinkets", price:0.14, items:[
+    {name:"Used Sticker", value:0.02, rarity:"common", weight:55},
+    {name:"Plastic Badge", value:0.05, rarity:"common", weight:25},
+    {name:"Keyring", value:0.10, rarity:"uncommon", weight:12},
+    {name:"Pocket Coin", value:0.14, rarity:"uncommon", weight:6},
+    {name:"Lucky Pin", value:0.35, rarity:"epic", weight:1},
+    {name:"Mini Collectible", value:0.75, rarity:"legendary", weight:1}
+  ]},
+  {name:"Tiny Box", price:0.19, items:[
+    {name:"Sticker Pack", value:0.05, rarity:"common", weight:55},
+    {name:"Button Pin", value:0.08, rarity:"common", weight:25},
+    {name:"Lanyard", value:0.17, rarity:"uncommon", weight:12},
+    {name:"Keychain", value:0.19, rarity:"uncommon", weight:6},
+    {name:"Enamel Pin", value:0.42, rarity:"epic", weight:1},
+    {name:"Micro Figurine", value:1.15, rarity:"legendary", weight:1}
+  ]},
+  {name:"Mini Box", price:0.36, items:[
+    {name:"Paper Cards", value:0.12, rarity:"common", weight:55},
+    {name:"Sticker Roll", value:0.18, rarity:"common", weight:25},
+    {name:"Key Strap", value:0.34, rarity:"uncommon", weight:12},
+    {name:"Coin Pouch", value:0.36, rarity:"uncommon", weight:6},
+    {name:"Desk Toy", value:0.85, rarity:"epic", weight:1},
+    {name:"Pocket Knife (toy)", value:1.65, rarity:"legendary", weight:1}
+  ]},
+  {name:"Small Box", price:0.73, items:[
+    {name:"Cloth Patch", value:0.25, rarity:"common", weight:55},
+    {name:"Rubber Bracelet", value:0.41, rarity:"common", weight:25},
+    {name:"Mini Poster", value:0.70, rarity:"uncommon", weight:12},
+    {name:"Cap Clip", value:0.73, rarity:"uncommon", weight:6},
+    {name:"Pocket Earbuds", value:1.40, rarity:"epic", weight:1},
+    {name:"LED Keylight", value:2.60, rarity:"legendary", weight:1}
+  ]},
+  {name:"Starter Silver", price:0.79, items:[
+    {name:"Cable Tie Set", value:0.30, rarity:"common", weight:55},
+    {name:"Phone Grip", value:0.48, rarity:"common", weight:25},
+    {name:"Mousepad Mini", value:0.75, rarity:"uncommon", weight:12},
+    {name:"Cap", value:0.79, rarity:"uncommon", weight:6},
+    {name:"USB Drive 8GB", value:1.70, rarity:"epic", weight:1},
+    {name:"Bluetooth Tag", value:3.20, rarity:"legendary", weight:1}
+  ]},
+  {name:"Bronze Box", price:1.67, items:[
+    {name:"T-Shirt (basic)", value:0.70, rarity:"common", weight:55},
+    {name:"Water Bottle", value:0.95, rarity:"common", weight:25},
+    {name:"Mini Speaker", value:1.55, rarity:"uncommon", weight:12},
+    {name:"Hoodie (thin)", value:1.67, rarity:"uncommon", weight:6},
+    {name:"Headset Lite", value:3.50, rarity:"epic", weight:1},
+    {name:"Smartband", value:8.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Silver Box", price:1.98, items:[
+    {name:"Shirt (graphic)", value:0.85, rarity:"common", weight:55},
+    {name:"Cap (embroidered)", value:1.10, rarity:"common", weight:25},
+    {name:"Mouse (basic)", value:1.90, rarity:"uncommon", weight:12},
+    {name:"Keyboard (basic)", value:1.98, rarity:"uncommon", weight:6},
+    {name:"Headphones", value:4.10, rarity:"epic", weight:1},
+    {name:"Mechanical Keyboard", value:10.50, rarity:"legendary", weight:1}
+  ]},
+  {name:"Gold Box", price:4.62, items:[
+    {name:"Controller Skin", value:1.80, rarity:"common", weight:55},
+    {name:"RGB Light Strip", value:2.25, rarity:"common", weight:25},
+    {name:"Gaming Mouse", value:4.40, rarity:"uncommon", weight:12},
+    {name:"Mechanical KB (lite)", value:4.62, rarity:"uncommon", weight:6},
+    {name:"Monitor 75Hz", value:9.50, rarity:"epic", weight:1},
+    {name:"Gaming Chair", value:24.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Diamond Box", price:7.27, items:[
+    {name:"Desk Mic (basic)", value:3.10, rarity:"common", weight:55},
+    {name:"RGB Headset Stand", value:4.20, rarity:"common", weight:25},
+    {name:"Gaming Headset", value:7.00, rarity:"uncommon", weight:12},
+    {name:"Controller", value:7.27, rarity:"uncommon", weight:6},
+    {name:"144Hz Monitor", value:18.90, rarity:"epic", weight:1},
+    {name:"Stream Deck", value:42.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Pro Gear", price:15.00, items:[
+    {name:"Mic Arm", value:6.00, rarity:"common", weight:55},
+    {name:"Webcam 1080p", value:8.50, rarity:"common", weight:25},
+    {name:"Wireless Mouse", value:14.50, rarity:"uncommon", weight:12},
+    {name:"Compact Keyboard", value:15.00, rarity:"uncommon", weight:6},
+    {name:"27\" Monitor", value:32.00, rarity:"epic", weight:1},
+    {name:"VR Headset (entry)", value:95.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Creator Kit", price:25.00, items:[
+    {name:"Softbox Light", value:10.00, rarity:"common", weight:55},
+    {name:"USB Mic", value:14.00, rarity:"common", weight:25},
+    {name:"Audio Interface", value:24.00, rarity:"uncommon", weight:12},
+    {name:"Tripod", value:25.00, rarity:"uncommon", weight:6},
+    {name:"Mirrorless Lens", value:60.00, rarity:"epic", weight:1},
+    {name:"Action Camera", value:180.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Enthusiast Box", price:49.99, items:[
+    {name:"60% Keyboard", value:21.00, rarity:"common", weight:55},
+    {name:"Wireless Headset", value:29.00, rarity:"common", weight:25},
+    {name:"27\" 144Hz", value:48.00, rarity:"uncommon", weight:12},
+    {name:"Stylus Tablet", value:49.99, rarity:"uncommon", weight:6},
+    {name:"4K Monitor", value:120.00, rarity:"epic", weight:1},
+    {name:"RTX Mid GPU", value:350.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Ultra Rich", price:120.50, items:[
+    {name:"65% Wireless KB", value:48.00, rarity:"common", weight:55},
+    {name:"ANC Headphones", value:72.00, rarity:"common", weight:25},
+    {name:"1440p 165Hz", value:118.00, rarity:"uncommon", weight:12},
+    {name:"Premium Chair", value:120.50, rarity:"uncommon", weight:6},
+    {name:"High-End DAC", value:260.00, rarity:"epic", weight:1},
+    {name:"PS5 / XSX", value:600.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Mega Rich", price:999.99, items:[
+    {name:"Creator Monitor", value:380.00, rarity:"common", weight:55},
+    {name:"4K Camcorder", value:520.00, rarity:"common", weight:25},
+    {name:"Gaming Laptop", value:980.00, rarity:"uncommon", weight:12},
+    {name:"Pro Drone", value:999.99, rarity:"uncommon", weight:6},
+    {name:"High-End GPU", value:1600.00, rarity:"epic", weight:1},
+    {name:"8K Camera", value:3500.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Insane Rich", price:4567.89, items:[
+    {name:"Dual 4K Setup", value:2000.00, rarity:"common", weight:55},
+    {name:"Studio Lens Kit", value:2600.00, rarity:"common", weight:25},
+    {name:"Workstation", value:4500.00, rarity:"uncommon", weight:12},
+    {name:"Cinema Drone", value:4567.89, rarity:"uncommon", weight:6},
+    {name:"Pro Cinema Cam", value:9000.00, rarity:"epic", weight:1},
+    {name:"Autonomous Rig", value:15000.00, rarity:"legendary", weight:1}
+  ]},
+  {name:"Ultimate Rich", price:9670.78, items:[
+    {name:"OLED Wall", value:4000.00, rarity:"common", weight:55},
+    {name:"Studio Rack", value:5200.00, rarity:"common", weight:25},
+    {name:"Dual-GPU Beast", value:9500.00, rarity:"uncommon", weight:12},
+    {name:"8K Production Cam", value:9670.78, rarity:"uncommon", weight:6},
+    {name:"3D Mocap Stage", value:22000.00, rarity:"epic", weight:1},
+    {name:"Full Studio Build", value:60000.00, rarity:"legendary", weight:1}
+  ]}
+];
+
+/* ---------------- DOM refs ---------------- */
+const balanceSpan = document.getElementById('balance');
+const boxesGrid = document.getElementById('boxesGrid');
+const casePopup = document.getElementById('casePopup');
+const caseStrip = document.getElementById('caseStrip');
+const winPopup = document.getElementById('winPopup');
+const winTitle = document.getElementById('winTitle');
+const winMeta = document.getElementById('winMeta');
+const keepBtn = document.getElementById('keepBtn');
+const sellBtn = document.getElementById('sellBtn');
+const invGrid = document.getElementById('invGrid');
+const redeemInputEl = document.getElementById('redeemInput');
+const redeemBtnEl = document.getElementById('redeemBtn');
+const redeemMsgEl = document.getElementById('redeemMsg');
+const addDollarBtn = document.getElementById('addDollar');
+const btnHome = document.getElementById('btnHome');
+const btnInv = document.getElementById('btnInv');
+const btnRedeem = document.getElementById('btnRedeem');
+
+/* ---------------- Utility ---------------- */
+function normCode(s){ return (s||'').trim().toLowerCase().replace(/\s+/g,''); }
+function updateBalance(){ balanceSpan.textContent = balance.toFixed(2); }
+
+/* ---------------- Render boxes ---------------- */
+function renderBoxes(){
+  boxesGrid.innerHTML = '';
+  BOXES.forEach((b, idx) => {
+    const card = document.createElement('div');
+    card.className = 'boxCard';
+    card.innerHTML = `
+      <div style="width:100%;display:flex;flex-direction:column;align-items:center;">
+        <h3 style="margin:0">${b.name}</h3>
+        <div class="price" style="margin-top:6px">Price: $${b.price.toFixed(2)}</div>
+        <div style="opacity:.85;font-size:.9rem;margin-top:6px">${b.items.length} items</div>
+      </div>
+      <div style="width:100%;display:flex;justify-content:center"><button class="btn openBtn">Open</button></div>
+    `;
+    card.querySelector('.openBtn').addEventListener('click', ()=> openBox(idx));
+    boxesGrid.appendChild(card);
+  });
+}
+
+/* ---------------- Weighted selection helper ---------------- */
+function pickWeighted(pool){
+  const total = pool.reduce((s,it)=>s+it.weight,0);
+  let r = Math.random() * total;
+  for(const it of pool){
+    if(r < it.weight) return it;
+    r -= it.weight;
+  }
+  return pool[pool.length-1];
+}
+
+/* ---------------- Open box: preselect winner + build strip + animate ---------------- */
+function openBox(boxIndex){
+  const BOX = BOXES[boxIndex];
+  if(balance < BOX.price){ alert('Not enough balance!'); return; }
+  balance -= BOX.price; updateBalance();
+
+  // Pre-select the winning item (real chosen item)
+  const winnerItem = pickWeighted(BOX.items);
+
+  // Build strip with filler and ensure winner is placed at a long index
+  caseStrip.innerHTML = '';
+
+  const leftPad = 8;
+  const repeats = 24; // more repeats => longer spin
+  const rightPad = 8;
+
+  const strip = [];
+
+  // left padding random items
+  for(let i=0;i<leftPad;i++) strip.push(pickWeighted(BOX.items));
+
+  // repeated blocks (many copies to create long travel)
+  for(let r=0;r<repeats;r++){
+    BOX.items.forEach(it => strip.push(it));
+  }
+
+  // right padding
+  for(let i=0;i<rightPad;i++) strip.push(pickWeighted(BOX.items));
+
+  // choose a winner index somewhere deep in the repeated area (to make it travel a lot)
+  const poolStart = leftPad;
+  const poolEnd = leftPad + repeats*BOX.items.length - 1;
+  const winnerIndex = Math.floor(poolStart + Math.random()*(poolEnd - poolStart + 1));
+
+  // force winner at that index
+  strip[winnerIndex] = winnerItem;
+
+  // render strip elements
+  strip.forEach((it, idx) => {
+    const el = document.createElement('div');
+    el.className = 'case-item ' + (it.name.length>18 ? 'small' : '');
+    // rarity class
+    el.classList.add('r-' + it.rarity);
+    el.innerHTML = `<div class="iname">${it.name}</div><div class="ival">$${it.value.toFixed(2)}</div>`;
+    caseStrip.appendChild(el);
+  });
+
+  // reset transform and show popup
+  caseStrip.style.transition = 'none';
+  caseStrip.style.transform = 'translateX(0px)';
+  void caseStrip.offsetWidth; // forced reflow
+  casePopup.style.display = 'flex';
+  casePopup.setAttribute('aria-hidden','false');
+
+  // compute translateX so the winner lands under the center pointer
+  const firstChild = caseStrip.children[0];
+  const itemRect = firstChild.getBoundingClientRect();
+  const itemWidth = Math.round(itemRect.width + 16); // width + margin approximation
+  const containerWidth = caseStrip.parentElement.getBoundingClientRect().width;
+  const centerOffset = (containerWidth/2) - (itemWidth/2);
+  const distance = winnerIndex * itemWidth;
+  const translateX = -(distance - centerOffset);
+
+  // compute duration based on pixels to travel, clamp to reasonable range
+  const pixels = Math.abs(translateX);
+  const speedPxPerSec = 900; // lower -> slower spin
+  let durationSec = pixels / speedPxPerSec;
+  if(durationSec < 3.6) durationSec = 3.6;
+  if(durationSec > 7.0) durationSec = 7.0;
+
+  // apply transition and animate
+  // easing chosen to start fast and ease into rest
+  caseStrip.style.transition = `transform ${durationSec}s cubic-bezier(.16,.84,.14,1)`;
+  requestAnimationFrame(()=>{ caseStrip.style.transform = `translateX(${translateX}px)`; });
+
+  // when animation finishes, show the win popup and hide the case popup
+  setTimeout(()=>{
+    currentDrop = {
+      box: BOX.name,
+      name: winnerItem.name,
+      rarity: winnerItem.rarity,
+      value: winnerItem.value
+    };
+    // show popup details
+    winTitle.textContent = `You got: ${currentDrop.name}`;
+    winMeta.textContent = `${currentDrop.box} • ${currentDrop.rarity.toUpperCase()} • $${currentDrop.value.toFixed(2)}`;
+    winPopup.style.display = 'flex';
+    casePopup.style.display = 'none';
+    casePopup.setAttribute('aria-hidden','true');
+  }, Math.round(durationSec * 1000 + 80));
+}
+
+/* ---------------- Keep / Sell logic ---------------- */
+keepBtn.addEventListener('click', ()=>{
+  if(!currentDrop) return;
+  inventory.push({...currentDrop, id: Date.now() + Math.random()});
+  currentDrop = null;
+  winPopup.style.display = 'none';
+  showInventory('all');
+});
+sellBtn.addEventListener('click', ()=>{
+  if(!currentDrop) return;
+  balance += currentDrop.value;
+  updateBalance();
+  currentDrop = null;
+  winPopup.style.display = 'none';
+});
+
+/* ---------------- Inventory rendering & filters ---------------- */
+function renderInventory(filter='all'){
+  invGrid.innerHTML = '';
+  const list = (filter === 'all') ? inventory : inventory.filter(it => it.rarity === filter);
+  if(list.length === 0){
+    const empty = document.createElement('div');
+    empty.className = 'invCard';
+    empty.style.gridColumn = '1/-1';
+    empty.style.textAlign = 'center';
+    empty.textContent = 'No items yet';
+    invGrid.appendChild(empty);
+    return;
+  }
+  list.forEach(it=>{
+    const card = document.createElement('div');
+    card.className = 'invCard';
+    card.innerHTML = `<div style="font-weight:700">${it.name}</div>
+                      <div class="invMeta"><div style="opacity:.9">${it.box}</div><div style="font-weight:600">$${it.value.toFixed(2)}</div></div>
+                      <div style="margin-top:6px;opacity:.8">Rarity: <strong>${it.rarity.toUpperCase()}</strong></div>`;
+    invGrid.appendChild(card);
+  });
+}
+
+/* filter buttons */
+document.querySelectorAll('.filterBtn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const f = btn.dataset.filter;
+    renderInventory(f === 'all' ? 'all' : f);
+  });
+});
+
+/* ---------------- Redeem & Add Money ---------------- */
+redeemBtnEl.addEventListener('click', ()=>{
+  const code = normCode(redeemInputEl.value);
+  if(!code){ redeemMsgEl.textContent = 'Enter a code.'; return; }
+  if(redeemCodes.hasOwnProperty(code)){
+    const amt = redeemCodes[code];
+    balance += amt; updateBalance();
+    redeemMsgEl.textContent = `✅ Redeemed $${amt.toFixed(2)}!`;
+    // one-time use
+    delete redeemCodes[code];
+  } else {
+    redeemMsgEl.textContent = '❌ Invalid or already used code.';
+  }
+  redeemInputEl.value = '';
+  setTimeout(()=>{ redeemMsgEl.textContent = ''; }, 3000);
+});
+addDollarBtn.addEventListener('click', ()=>{ balance += 1; updateBalance(); });
+
+/* ---------------- Tabs ---------------- */
+function hideTabs(){ document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); }
+btnHome.addEventListener('click', ()=>{ hideTabs(); document.getElementById('homeTab').classList.add('active'); });
+btnInv.addEventListener('click', ()=>{ hideTabs(); document.getElementById('invTab').classList.add('active'); casePopup.style.display = 'none'; });
+btnRedeem.addEventListener('click', ()=>{ hideTabs(); document.getElementById('redeemTab').classList.add('active'); });
+
+/* ---------------- Init ---------------- */
+updateBalance();
+renderBoxes();
+
+/* ensure center pointer on top */
+document.getElementById('centerPointer').style.zIndex = 4000;
+
+</script>
+</body>
+</html>
