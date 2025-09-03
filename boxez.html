@@ -56,6 +56,16 @@ nav button:hover{box-shadow:0 0 14px rgba(0,255,200,0.06)}
 .r-epic{border-color:#9c27b0}
 .r-legendary{border-color:#ff9800}
 .r-diamond{border-color:#00ffff}
+.r-rainbow {
+  border: 4px solid; /* width of the border */
+  border-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet) 1;
+  border-radius: 500px; /* rounded corners */
+  padding: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+
 
 /* Win popup */
 .win-box{background:var(--tile);border-radius:10px;padding:14px;border:2px solid var(--accent);width:min(92vw,520px);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
@@ -389,7 +399,8 @@ const BOXES = [
       {name:"Golden ducky", value:60000.00, rarity:"legendary", weight:3},
       {name:"Diamond ducky", value:100000.00, rarity:"diamond", weight:2},
       {name:"Ducky chan", value:110000.00, rarity:"diamond", weight:0.5},
-      {name:"Duck bond", value:110000.00, rarity:"diamond", weight:0.5}
+      {name:"Duck bond", value:110000.00, rarity:"diamond", weight:0.4},
+      {name:"Rainbow Ducky", value:1110000.00, rarity:"rainbow", weight:0.1}
     ]
   }
 ];
