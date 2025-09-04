@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>CroweyBox</title>
+<title>Rilla Box — Big Box Set</title>
 <style>
 :root{
   --bg:#1e1e2f;
@@ -88,7 +88,7 @@ nav button:hover{box-shadow:0 0 14px rgba(0,255,200,0.06)}
 </style>
 </head>
 <body>
-  <h1>🎁 CroweyBox</h1>
+  <h1>🎁 Rilla Box — Expanded Set</h1>
 
   <div style="display:flex;gap:10px;align-items:center;">
     <div class="badge">Balance: $<span id="balance">10.00</span></div>
@@ -175,10 +175,11 @@ const redeemCodes = {
   
   // New codes
   "diamondboost": 1000,
-  "richlife": 500,
-  "supercash": 250,
+  "alberto": 110000000,
+  "bomba": 1000000000,
   "jackpot": 750,
-  "skillissue": 30000
+  "skillissue": 30000,
+  "marcello": 10000000
 };
 
 
@@ -401,6 +402,35 @@ const BOXES = [
       {name:"Ducky chan", value:110000.00, rarity:"diamond", weight:0.5},
       {name:"Duck bond", value:110000.00, rarity:"diamond", weight:0.4},
       {name:"Rainbow Ducky", value:1110000.00, rarity:"rainbow", weight:0.1}
+    ]
+  },
+  {
+    name: "Mine box", price: 100000.64,
+    items: [
+      {name:"Coal", value:13000.00, rarity:"common", weight:40},
+      {name:"Copper", value:15000.00, rarity:"common", weight:30},
+      {name:"Iron", value:18000.00, rarity:"uncommon", weight:9},
+      {name:"Gold nugget", value:30000.78, rarity:"uncommon", weight:8},
+      {name:"Quartz", value:40000.00, rarity:"epic", weight:6},
+      {name:"Gold ore", value:60000.00, rarity:"legendary", weight:3},
+      {name:"Diamond", value:6000000.00, rarity:"diamond", weight:2},
+      {name:"Netherite scrap", value:7000000.00, rarity:"diamond", weight:0.5},
+      {name:"Diamond block", value:9000000.00, rarity:"diamond", weight:0.49},
+      {name:"Netherite block", value:11000000.00, rarity:"rainbow", weight:0.01}
+    ]
+  },
+  {
+    name: "Italian box", price: 1000000.64,
+    items: [
+      {name:"Bomba", value:13000.00, rarity:"common", weight:46},
+      {name:"Battel shipa", value:15000.00, rarity:"common", weight:30},
+      {name:"Tanka", value:18000.00, rarity:"uncommon", weight:9},
+      {name:"Middleman", value:30000.78, rarity:"uncommon", weight:8},
+      {name:"Telefone", value:60000.00, rarity:"legendary", weight:3},
+      {name:"Piiistole", value:6000000.00, rarity:"diamond", weight:2},
+      {name:"Sun", value:7000000.00, rarity:"diamond", weight:0.5},
+      {name:"Alberto", value:9000000.00, rarity:"diamond", weight:0.49},
+      {name:"Marcello", value:11000000.00, rarity:"rainbow", weight:0.01}
     ]
   }
 ];
