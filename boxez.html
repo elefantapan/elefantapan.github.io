@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Croweybox</title>
+<title>TheCroweyBoxez</title>
 <style>
 :root{
   --bg:#1e1e2f;
@@ -87,7 +87,7 @@ nav button:hover{box-shadow:0 0 14px rgba(0,255,200,0.06)}
 </style>
 </head>
 <body>
-  <h1>🎁 CroweyBoxez</h1>
+  <h1>🎁 Crowey Boxez</h1>
 
   <div style="display:flex;gap:10px;align-items:center;">
     <div class="badge">Balance: $<span id="balance">10.00</span></div>
@@ -494,96 +494,96 @@ function pickWeighted(pool){
 }
 
 /* ------------- open box (preselect winner & animate) -------------- */
-function openBox(boxIndex){
+function openBox(boxIndex) {
   const BOX = BOXES[boxIndex];
-  if(balance < BOX.price){ alert('Not enough balance!'); return; }
-  balance -= BOX.price; updateBalance();
+  if (balance < BOX.price) { 
+    alert('Not enough balance!'); 
+    return; 
+  }
+  balance -= BOX.price; 
+  updateBalance();
 
-  // preselect winner
-  // preselect winner (rig if needed)
-// preselect winner (rig if needed)
+  // --- Preselect winner (rig if needed) ---
+  // --- Preselect winner (rig if needed) ---
 let winnerItem;
 if (riggedDropsLeft > 0) {
-  // force the best item in this box
-  winnerItem = BOX.items.reduce((best, it) => 
-    it.value > best.value ? it : best, BOX.items[0]
-  );
-  riggedDropsLeft--; // use up one rig
+  winnerItem = BOX.items.reduce((best, it) => it.value > best.value ? it : best, BOX.items[0]);
+  riggedDropsLeft--;
 } else {
   winnerItem = pickWeighted(BOX.items);
 }
 
+// --- Build strip ---
+caseStrip.innerHTML = '';
+const leftPad = 8;
+const repeats = 24;
+const rightPad = 8;
+const strip = [];
 
-  currentBoxIndex = boxIndex;
+// fill with junk first
+for (let i = 0; i < leftPad; i++) strip.push(pickWeighted(BOX.items));
+for (let r = 0; r < repeats; r++) BOX.items.forEach(it => strip.push(it));
+for (let i = 0; i < rightPad; i++) strip.push(pickWeighted(BOX.items));
 
-  // build strip
-  caseStrip.innerHTML = '';
+// force winner into the exact center slot
+// force winner somewhere in the middle of the strip
+const winnerIndex = leftPad + Math.floor((repeats * BOX.items.length) / 2);
+strip[winnerIndex] = winnerItem;
 
-  const leftPad = 8;
-  const repeats = 24; // more = longer travel
-  const rightPad = 8;
-  const strip = [];
+// render strip (same as before)
+strip.forEach(it => {
+  const el = document.createElement('div');
+  el.className = 'case-item ' + (it.name.length > 18 ? 'small' : '');
+  el.classList.add('r-' + it.rarity);
+  el.innerHTML = `<div class="iname">${it.name}</div><div class="ival">$${it.value.toFixed(2)}</div>`;
+  caseStrip.appendChild(el);
+});
 
-  for(let i=0;i<leftPad;i++) strip.push(pickWeighted(BOX.items));
-  for(let r=0;r<repeats;r++) BOX.items.forEach(it=> strip.push(it));
-  for(let i=0;i<rightPad;i++) strip.push(pickWeighted(BOX.items));
+// reset transform and show popup
+caseStrip.style.transition = 'none';
+caseStrip.style.transform = 'translateX(0px)';
+void caseStrip.offsetWidth;
+casePopup.style.display = 'flex';
+casePopup.setAttribute('aria-hidden','false');
 
-  // choose winner index deep in strip
-  const poolStart = leftPad;
-  const poolEnd = leftPad + repeats*BOX.items.length - 1;
-  const winnerIndex = Math.floor(poolStart + Math.random()*(poolEnd - poolStart + 1));
-  strip[winnerIndex] = winnerItem; // force chosen winner at index
+// compute item width
+// compute item width
+const firstChild = caseStrip.children[0];
+const itemWidth = Math.round(firstChild.getBoundingClientRect().width + 16); // include margins
+const containerWidth = caseStrip.parentElement.getBoundingClientRect().width;
+const centerOffset = (containerWidth / 2) - (itemWidth / 2);
 
-  // render strip
-  strip.forEach(it=>{
-    const el = document.createElement('div');
-    el.className = 'case-item ' + (it.name.length>18 ? 'small' : '');
-    el.classList.add('r-' + it.rarity);
-    el.innerHTML = `<div class="iname">${it.name}</div><div class="ival">$${it.value.toFixed(2)}</div>`;
-    caseStrip.appendChild(el);
-  });
+// ✅ Align winner exactly under pointer
+const translateX = -(winnerIndex * itemWidth - centerOffset);
 
-  // reset transform and show popup
-  caseStrip.style.transition = 'none';
-  caseStrip.style.transform = 'translateX(0px)';
-  void caseStrip.offsetWidth;
-  casePopup.style.display = 'flex';
-  casePopup.setAttribute('aria-hidden','false');
+// compute duration
+const pixelsToTravel = Math.abs(translateX);
+const speed = 900; // px/sec
+let duration = pixelsToTravel / speed;
+duration = Math.min(Math.max(duration, 3.6), 7.5);
 
-  // compute translate so winner aligns to center pointer
-  const firstChild = caseStrip.children[0];
-  const itemRect = firstChild.getBoundingClientRect();
-  const itemWidth = Math.round(itemRect.width + 16); // include margins approx
-  const containerWidth = caseStrip.parentElement.getBoundingClientRect().width;
-  const centerOffset = (containerWidth / 2) - (itemWidth / 2);
-  const distance = winnerIndex * itemWidth;
-  const translateX = -(distance - centerOffset);
+// animate
+caseStrip.style.transition = `transform ${duration}s cubic-bezier(.16,.84,.14,1)`;
+requestAnimationFrame(() => {
+  caseStrip.style.transform = `translateX(${translateX}px)`;
+});
 
-  // compute duration (pixels / speed) and clamp
-  const pixelsToTravel = Math.abs(translateX);
-  const speed = 900; // px / sec (tweak slower = smaller)
-  let duration = pixelsToTravel / speed;
-  if(duration < 3.6) duration = 3.6;
-  if(duration > 7.5) duration = 7.5;
 
-  // animate with easing
-  caseStrip.style.transition = `transform ${duration}s cubic-bezier(.16,.84,.14,1)`;
-  requestAnimationFrame(()=>{ caseStrip.style.transform = `translateX(${translateX}px)`; });
+// show result after animation
+setTimeout(() => {
+  currentDrop = {
+    box: BOX.name,
+    name: winnerItem.name,
+    rarity: winnerItem.rarity,
+    value: winnerItem.value
+  };
+  winTitle.textContent = `You got: ${currentDrop.name}`;
+  winMeta.textContent = `${currentDrop.box} • ${currentDrop.rarity.toUpperCase()} • $${currentDrop.value.toFixed(2)}`;
+  winPopup.style.display = 'flex';
+  casePopup.style.display = 'none';
+  casePopup.setAttribute('aria-hidden', 'true');
+}, Math.round(duration * 1000 + 80));
 
-  // when animation ends show the win popup and hide case popup
-  setTimeout(()=>{
-    currentDrop = {
-      box: BOX.name,
-      name: winnerItem.name,
-      rarity: winnerItem.rarity,
-      value: winnerItem.value
-    };
-    winTitle.textContent = `You got: ${currentDrop.name}`;
-    winMeta.textContent = `${currentDrop.box} • ${currentDrop.rarity.toUpperCase()} • $${currentDrop.value.toFixed(2)}`;
-    winPopup.style.display = 'flex';
-    casePopup.style.display = 'none';
-    casePopup.setAttribute('aria-hidden','true');
-  }, Math.round(duration * 1000 + 80));
 }
 
 /* ------------- keep / sell (popup) -------------- */
