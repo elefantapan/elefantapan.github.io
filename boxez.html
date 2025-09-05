@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>CroweyBoxez</title>
+<title>Croweybox</title>
 <style>
 :root{
   --bg:#1e1e2f;
@@ -162,7 +162,7 @@ let balance = 10.00;
 let inventory = [];
 let currentDrop = null;
 let currentBoxIndex = null;
-let rigNextDrop = false;
+let riggedDropsLeft = 0;
 
 
 /* Redeem codes (normalized keys) */
@@ -501,13 +501,18 @@ function openBox(boxIndex){
 
   // preselect winner
   // preselect winner (rig if needed)
+// preselect winner (rig if needed)
 let winnerItem;
-if(rigNextDrop){
-  winnerItem = BOX.items.reduce((a,b)=> a.value > b.value ? a : b);
-  rigNextDrop = false;
+if (riggedDropsLeft > 0) {
+  // force the best item in this box
+  winnerItem = BOX.items.reduce((best, it) => 
+    it.value > best.value ? it : best, BOX.items[0]
+  );
+  riggedDropsLeft--; // use up one rig
 } else {
   winnerItem = pickWeighted(BOX.items);
 }
+
 
   currentBoxIndex = boxIndex;
 
@@ -646,26 +651,35 @@ document.querySelectorAll('.filterBtn').forEach(btn=>{
 });
 
 /* ------------- redeem & add money -------------- */
-redeemBtnEl.addEventListener('click', ()=>{
+redeemBtnEl.addEventListener('click', () => {
   const raw = redeemInputEl.value || '';
   const code = normCode(raw);
-  if(!code){ redeemMsgEl.textContent = 'Enter a code.'; return; }
+  if (!code) {
+    redeemMsgEl.textContent = 'Enter a code.';
+    return;
+  }
 
-  if(redeemCodes.hasOwnProperty(code)){
-    if(redeemCodes[code] === "RIG"){
-      rigNextDrop = true;
-      redeemMsgEl.textContent = "✨ Your next case is rigged to MAX! ✨";
+  // 🔹 Handle rigme codes first
+  if (/^rigme\d*$/i.test(code)) {
+    const match = code.match(/rigme(\d+)/i);
+    if (match) {
+      riggedDropsLeft += parseInt(match[1], 10); // rigmeN adds N
     } else {
-      const amt = redeemCodes[code];
-      balance += amt; updateBalance();
-      redeemMsgEl.textContent = `✅ Redeemed $${amt.toFixed(2)}!`;
+      riggedDropsLeft += 1; // plain rigme adds 1
     }
+    redeemMsgEl.textContent = `✨ Your next ${riggedDropsLeft} case(s) are rigged to MAX! ✨`;
+    return;
+  }
+
+  // 🔹 Otherwise handle normal codes from redeemCodes
+  if (redeemCodes.hasOwnProperty(code)) {
+    const amt = redeemCodes[code];
+    balance += amt;
+    updateBalance();
+    redeemMsgEl.textContent = `✅ Redeemed $${amt.toFixed(2)}!`;
   } else {
     redeemMsgEl.textContent = '❌ Invalid or already used code.';
   }
-
-  redeemInputEl.value = '';
-  setTimeout(()=>{ redeemMsgEl.textContent = ''; }, 3000);
 });
 
 
