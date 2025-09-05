@@ -58,7 +58,7 @@ nav button:hover{box-shadow:0 0 14px rgba(0,255,200,0.06)}
 .r-diamond{border-color:#00ffff}
 .r-rainbow {
   border: 4px solid; /* width of the border */
-  border-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet) 1; /* rounded corners */
+  border-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet) 1;
   padding: 8px;
   color: white;
   font-weight: bold;
@@ -162,6 +162,8 @@ let balance = 10.00;
 let inventory = [];
 let currentDrop = null;
 let currentBoxIndex = null;
+let rigNextDrop = false;
+
 
 /* Redeem codes (normalized keys) */
 const redeemCodes = {
@@ -178,7 +180,8 @@ const redeemCodes = {
   "bomba": 1000000000,
   "jackpot": 750,
   "skillissue": 30000,
-  "marcello": 10000000
+  "marcello": 10000000,
+  "rigme": "RIG"
 };
 
 
@@ -497,7 +500,15 @@ function openBox(boxIndex){
   balance -= BOX.price; updateBalance();
 
   // preselect winner
-  const winnerItem = pickWeighted(BOX.items);
+  // preselect winner (rig if needed)
+let winnerItem;
+if(rigNextDrop){
+  winnerItem = BOX.items.reduce((a,b)=> a.value > b.value ? a : b);
+  rigNextDrop = false;
+} else {
+  winnerItem = pickWeighted(BOX.items);
+}
+
   currentBoxIndex = boxIndex;
 
   // build strip
@@ -639,17 +650,24 @@ redeemBtnEl.addEventListener('click', ()=>{
   const raw = redeemInputEl.value || '';
   const code = normCode(raw);
   if(!code){ redeemMsgEl.textContent = 'Enter a code.'; return; }
+
   if(redeemCodes.hasOwnProperty(code)){
-    const amt = redeemCodes[code];
-    balance += amt; updateBalance();
-    redeemMsgEl.textContent = `✅ Redeemed $${amt.toFixed(2)}!`;
-    delete redeemCodes[code]; // one-time use
+    if(redeemCodes[code] === "RIG"){
+      rigNextDrop = true;
+      redeemMsgEl.textContent = "✨ Your next case is rigged to MAX! ✨";
+    } else {
+      const amt = redeemCodes[code];
+      balance += amt; updateBalance();
+      redeemMsgEl.textContent = `✅ Redeemed $${amt.toFixed(2)}!`;
+    }
   } else {
     redeemMsgEl.textContent = '❌ Invalid or already used code.';
   }
+
   redeemInputEl.value = '';
   setTimeout(()=>{ redeemMsgEl.textContent = ''; }, 3000);
 });
+
 
 addDollarBtn.addEventListener('click', ()=>{ balance += 1; updateBalance(); });
 
