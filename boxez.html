@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>TheCroweyBoxez</title>
+<title>Crowey boxez</title>
 <style>
 :root{
   --bg:#1e1e2f;
@@ -87,7 +87,7 @@ nav button:hover{box-shadow:0 0 14px rgba(0,255,200,0.06)}
 </style>
 </head>
 <body>
-  <h1>🎁 Crowey Boxez</h1>
+  <h1>🎁 Crowey boxez</h1>
 
   <div style="display:flex;gap:10px;align-items:center;">
     <div class="badge">Balance: $<span id="balance">10.00</span></div>
@@ -700,6 +700,21 @@ renderBoxes();
 
 /* ensure pointer above everything */
 document.getElementById('centerPointer').style.zIndex = 5000;
+ // Function to spawn a custom item directly into inventory
+function spawnInThing(name, value, rarity = "common", box) {
+  const newDrop = {
+    box: box, // or pass another param if you want
+    name: name,
+    rarity: rarity.toLowerCase(),
+    value: parseFloat(value),
+    id: Date.now() + Math.random() // unique ID
+  };
+
+  inventory.push(newDrop);
+  renderInventory('all'); // refresh inventory UI
+  alert(`✨ Spawned ${name} [${rarity}] worth $${value}!`);
+}
+
 </script>
 </body>
 </html>
