@@ -701,18 +701,23 @@ renderBoxes();
 /* ensure pointer above everything */
 document.getElementById('centerPointer').style.zIndex = 5000;
  // Function to spawn a custom item directly into inventory
-function spawnInThing(name, value, rarity = "common", box) {
-  const newDrop = {
-    box: box, // or pass another param if you want
-    name: name,
-    rarity: rarity.toLowerCase(),
-    value: parseFloat(value),
-    id: Date.now() + Math.random() // unique ID
-  };
+// Function to spawn a custom item directly into inventory
+function spawnInThing(name, value, rarity = "common", amount = 1) {
+  for (let i = 0; i < amount; i++) {
+    const newDrop = {
+      box: "Custom Spawn", // or make this an argument too
+      name: name,
+      rarity: rarity.toLowerCase(),
+      value: parseFloat(value),
+      id: Date.now() + Math.random() // unique ID
+    };
+    inventory.push(newDrop);
+  }
 
-  inventory.push(newDrop);
   renderInventory('all'); // refresh inventory UI
-  alert(`✨ Spawned ${name} [${rarity}] worth $${value}!`);
+  alert(`✨ Spawned ${amount}x ${name} [${rarity}] worth $${value} each!`);
+}
+
 }
 
 </script>
