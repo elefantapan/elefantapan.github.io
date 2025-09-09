@@ -717,7 +717,7 @@ renderBoxes();
 document.getElementById('centerPointer').style.zIndex = 5000;
  // Function to spawn a custom item directly into inventory
 // Function to spawn a custom item directly into inventory
-function spawnInThing(name, value, rarity = "common", amount = 1, box) {
+function spawnInThing(name, value, rarity = "common", amount = 1, box = "Custom spawn") {
   for (let i = 0; i < amount; i++) {
     const newDrop = {
       box: box, // or make this an argument too
